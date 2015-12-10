@@ -4,6 +4,7 @@
 #
 
 import psycopg2
+import bleach
 
 
 def connect():
@@ -35,6 +36,7 @@ def deletePlayers():
         c = DB.cursor()
         c.execute("DELETE FROM players")
         DB.close()
+        DB.commit()
         print 'Player records removed!'
     except psycopg2.Error as e:
         print e.pgerror
@@ -66,6 +68,16 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
+    try:
+        DB = connect()
+        c = DB.cursor()
+        player = bleach.clean(name)
+        c.execute("INSERT INTO players(name) VALUES (%s)", (player,))
+        DB.commit()
+        DB.close()
+        print 'success!'
+    except psycopg2.Error as e:
+        print e.pgerror
     
 
 
@@ -82,6 +94,10 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    try:
+        DB = connect()
+        c = DB.cursor()
+        c.execute
 
 
 def reportMatch(winner, loser):
